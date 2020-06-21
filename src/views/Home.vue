@@ -1,23 +1,26 @@
 <template>
   <div class="home">
     <van-row>
-      <van-col span="8">
+      <van-col span="2">
         1
       </van-col>
-      <van-col span="8">
+      <van-col span="20">
         <img alt="Vue logo" src="../assets/logo.png" />
       </van-col>
-      <van-col span="8">
+      <van-col span="2">
         3
       </van-col>
     </van-row>
     <van-row>
       <van-col span="24">
-        <hello msg="Hello here, welcom to vue app."/>
+        {{status}}
       </van-col>
     </van-row>
   </div>
 </template>
+
+<style lang="less" scoped>
+</style>
 
 <script>
 import { Col, Row } from 'vant';

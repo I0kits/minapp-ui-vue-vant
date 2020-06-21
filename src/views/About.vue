@@ -1,5 +1,5 @@
 <template>
-  <div class="about">
+  <div class="about" v-wechat-title="this.$route.meta.title=title">
     <h1>This is an about page</h1>
     <van-icon name="chat-o" badge="9" size="80" />
     <br/>
@@ -17,6 +17,10 @@ export default {
     [Icon.name]: Icon,
     [Button.name]: Button,
   },
+  data() {
+    // 动态标题：
+    return { title: `DT-${new Date().getTime()}` };
+  },
   methods: {
     backToHome() {
       this.$router.push('/');
@@ -25,7 +29,7 @@ export default {
 };
 </script>
 
-<style lang="less">
+<style scoped lang="less">
   .about {
     button {
       margin: 5px 5px;
