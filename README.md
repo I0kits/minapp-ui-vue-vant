@@ -1,5 +1,6 @@
 # minapp-ui-vue
 https://minapp.aibaby.online/vue-vant-vapp/index.html
+(vant demo：https://github.com/youzan/vant-demo/blob/master/vant/base/src/router.js)
 
 ### dingtalk refs
 * [apis]https://ding-doc.dingtalk.com/doc#/dev/

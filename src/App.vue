@@ -1,12 +1,18 @@
 <template>
   <div id="app">
-    <div id="nav" v-if="!ready" v-bind:class="{ error: hasErrors }">
+    <div id="tips" v-if="!ready" v-bind:class="{ error: hasErrors }">
       <p>{{status}}</p>
       <p v-if="hasErrors">
         Please contact <a href="mailto:wangwii@foxmail.com">Administrator</a>
       </p>
     </div>
-    <router-view v-wechat-title="$route.meta.title" v-if="ready"/>
+    <van-nav-bar v-if="ready" @click-right="onClickRight">
+      <template #right>
+        用户名｜<van-image round width="40px" height="40px" name="icon" :src="icon"></van-image>
+      </template>
+    </van-nav-bar>
+    <div v-if="ready" class="van-hairline--bottom"></div>
+    <router-view v-if="ready"/>
   </div>
 </template>
 
@@ -28,7 +34,7 @@
   }
 }
 
-#nav {
+#tips {
   padding: 30px;
   background-color: #42b983;
 }
@@ -47,6 +53,7 @@
 
 <script>
 import * as dd from 'dingtalk-jsapi';
+import { NavBar, Image } from 'vant';
 
 import conf from './conf';
 import Apis from './apis';
@@ -54,12 +61,16 @@ import Apis from './apis';
 export default {
   name: 'App',
   components: {
+    [Image.name]: Image,
+    [NavBar.name]: NavBar,
   },
   data() {
     return {
       ready: false,
       hasErrors: true,
       status: 'Not in DingTalk environment!',
+
+      icon: 'https://tva3.sinaimg.cn/crop.2.2.363.363.180/c23430b4tw1el1fpw55y8j20a70a73zt.jpg',
     };
   },
   mounted() {
@@ -86,9 +97,14 @@ export default {
       // loading the user information
       Apis.getUserInfo(conf.corpId).subscribe((dat) => {
         this.status = `INFO: ${JSON.stringify(dat.data)}`;
+        this.ready = true;
       }, (err) => {
         this.status = `ERRO: ${JSON.stringify(err)}`;
       });
+    },
+    onClickRight() {
+      if (this.$route.path === '/profile') return;
+      this.$router.push('/profile');
     },
   },
 };

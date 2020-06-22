@@ -25,8 +25,9 @@ const getAuthCode = (corpId) => {
 };
 
 const fetchUserInfo = (dat) => {
-  console.log('call int fetchUserInfo:', dat.code);
-  return request.get('/user', { params: { code: dat.code } });
+  console.log('call int fetchUserInfo:', dat.code, request);
+  // return request.get('/user', { params: { code: dat.code } });
+  return Promise.resolve({ name: 'Rex' });
 };
 
 export default {
