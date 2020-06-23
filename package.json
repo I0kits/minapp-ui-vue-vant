@@ -7,13 +7,15 @@
     "build": "vue-cli-service build --modern",
     "test:unit": "vue-cli-service test:unit",
     "lint": "vue-cli-service lint",
-    "deploy": "node -r dotenv/config ./bin/deployer.js",
+    "deploy:oss": "cross-env PUBLIC_PATH=vue-vant-vapp vue-cli-service build --modern && node -r dotenv/config ./bin/deployer.js",
+    "deploy:surge": "node -r dotenv/config ./bin/deployer-surge.js",
     "web:serve": "serve -l 9000 dist"
   },
   "dependencies": {
     "axios": "^0.19.2",
     "core-js": "^3.6.4",
     "dingtalk-jsapi": "^2.11.2",
+    "lodash": "^4.17.15",
     "register-service-worker": "^1.7.1",
     "rxjs": "^6.5.5",
     "vant": "^2.8.6",
@@ -36,6 +38,7 @@
     "babel-eslint": "^10.1.0",
     "babel-plugin-import": "^1.13.0",
     "chai": "^4.1.2",
+    "cross-env": "^7.0.2",
     "date-format": "^3.0.0",
     "dotenv": "^8.2.0",
     "eslint": "^6.7.2",
@@ -45,6 +48,7 @@
     "less": "^3.0.4",
     "less-loader": "^5.0.0",
     "serve": "^11.3.2",
+    "surge": "^0.21.3",
     "vue-template-compiler": "^2.6.11"
   },
   "eslintConfig": {

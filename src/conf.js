@@ -1,6 +1,6 @@
 export default {
-  disableDingTalk: true,
+  disableDingTalk: false,
   amapKey: '753ea77c5a4638f9ce4ea33de8400335',
-  corpId: 'dingfb60e488237f039eee0f45d8e4f7c288',
+  corpId: 'ding00171aa88c902cffacaaa37764f94726',
   apiBaseUrl: 'http://api-rextkshuiliweb791128.vaiwan.com/api',
 };

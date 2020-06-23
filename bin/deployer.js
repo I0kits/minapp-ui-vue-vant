@@ -12,23 +12,25 @@ const cli = new OssCli({
   region: process.env.REGION_NAME || 'oss-cn-zhangjiakou',
 });
 
-const uploadFiles = async (dir) => {
-  const cwd = path.posix.join(__dirname, '../dist');
+const uploadFiles = async (dir, version) => {
+  const cwd = path.resolve(process.env.DIST_DIR_PATH || './dist');
 
   globby.sync('**/*', { cwd }).forEach(async (file) => {
-    const filePath = `${dir}/${file}`;
-    // console.log('Putting %s to [%s]', `${cwd}/${file}`, `${bucket}/${filePath}`);
-    await cli.put(filePath, `${cwd}/${file}`);
-    // console.log("Updating %s symlink to: [%s]", file, path);
-    // await cli.putSymlink(file, filePath);
+    const fileUploadPath = `${dir}-${version}/${file}`;
+    // console.log('Putting %s to [%s]', `${cwd}/${file}`, `${bucket}/${fileUploadPath}`);
+
+    await cli.put(fileUploadPath, `${cwd}/${file}`);
+    await cli.putSymlink(`${dir}/${file}`, fileUploadPath);
+    // console.log('Updating %s symlink to: [%s]', file, path);
   });
 };
 
 const deploy = async () => {
-  // const version = format.asString('yyyyMMddhhmmss', new Date());
-  const baseName = `${process.env.PUBLIC_PATH || ''}`; // /${version}
-  console.log('Prepare to upload files to [%s/%s]', bucket, baseName);
-  await uploadFiles(baseName);
+  const version = format.asString('yyyyMMddhhmmss', new Date());
+  const folderName = `${process.env.PUBLIC_PATH || ''}`;
+
+  console.log('Prepare to upload files to [%s/%s]', bucket, `${folderName}-${version}`);
+  await uploadFiles(folderName, version);
   console.log('All files uploaded, Start update sym links...');
 };
 
