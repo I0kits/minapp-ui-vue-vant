@@ -7,9 +7,8 @@
     "build": "vue-cli-service build --modern",
     "test:unit": "vue-cli-service test:unit",
     "lint": "vue-cli-service lint",
-    "deploy:oss": "cross-env PUBLIC_PATH=vue-vant-vapp vue-cli-service build --modern && node -r dotenv/config ./bin/deployer.js",
-    "deploy:surge": "node -r dotenv/config ./bin/deployer-surge.js",
-    "web:serve": "serve -l 9000 dist"
+    "deploy:oss": "vue-cli-service build --mode production --modern && node -r dotenv/config ./bin/deployer.js",
+    "deploy:surge": "vue-cli-service build --mode staging --modern && node -r dotenv/config ./bin/deployer-surge.js"
   },
   "dependencies": {
     "axios": "^0.19.2",
@@ -47,7 +46,6 @@
     "globby": "^11.0.1",
     "less": "^3.0.4",
     "less-loader": "^5.0.0",
-    "serve": "^11.3.2",
     "surge": "^0.21.3",
     "vue-template-compiler": "^2.6.11"
   },

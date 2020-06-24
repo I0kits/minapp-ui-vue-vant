@@ -27,7 +27,7 @@ const uploadFiles = async (dir, version) => {
 
 const deploy = async () => {
   const version = format.asString('yyyyMMddhhmmss', new Date());
-  const folderName = `${process.env.PUBLIC_PATH || ''}`;
+  const folderName = `${process.env.CONTEXT_PATH || ''}`;
 
   console.log('Prepare to upload files to [%s/%s]', bucket, `${folderName}-${version}`);
   await uploadFiles(folderName, version);

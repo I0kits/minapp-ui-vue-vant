@@ -1,6 +1,8 @@
 # minapp-ui-vue
-钉钉H5微应用，
-https://minapp.aibaby.online/vue-vant-vapp/index.html
+
+钉钉H5微应用:
+* https://smart-shuili.surge.sh
+* https://minapp.aibaby.online/vue-vant-vapp/index.html
 
 ### refs
 * [apis](https://ding-doc.dingtalk.com/doc#/serverapi2/gh60vz)
