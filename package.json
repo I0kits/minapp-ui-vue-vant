@@ -4,11 +4,11 @@
   "private": true,
   "scripts": {
     "dev": "vue-cli-service serve",
-    "build": "vue-cli-service build --modern",
-    "test:unit": "vue-cli-service test:unit",
     "lint": "vue-cli-service lint",
-    "deploy:oss": "vue-cli-service build --mode production --modern && node -r dotenv/config ./bin/deployer.js",
-    "deploy:surge": "vue-cli-service build --mode staging --modern && node -r dotenv/config ./bin/deployer-surge.js"
+    "test:unit": "vue-cli-service test:unit",
+    "build": "vue-cli-service build --modern",
+    "deploy:oss": "vue-cli-service build --modern && vue-cli-service deploy-oss",
+    "deploy:surge": "vue-cli-service build --mode staging --modern && vue-cli-service deploy-surge"
   },
   "dependencies": {
     "axios": "^0.19.2",
@@ -39,7 +39,6 @@
     "chai": "^4.1.2",
     "cross-env": "^7.0.2",
     "date-format": "^3.0.0",
-    "dotenv": "^8.2.0",
     "eslint": "^6.7.2",
     "eslint-plugin-import": "^2.20.2",
     "eslint-plugin-vue": "^6.2.2",
@@ -78,5 +77,11 @@
     "iOS >= 7",
     "Android >= 4.0",
     "last 1 versions"
-  ]
+  ],
+  "vuePlugins": {
+    "service": [
+      "bin/deploy-oss.js",
+      "bin/deploy-surge.js"
+    ]
+  }
 }

@@ -1,6 +1,7 @@
 export default {
-  disableDingTalk: true,
   corpId: process.env.VUE_APP_CORP_ID,
-  amapKey: '753ea77c5a4638f9ce4ea33de8400335',
-  apiBaseUrl: 'http://api-rextkshuiliweb791128.vaiwan.com/api',
+  amapKey: process.env.VUE_APP_AMAP_KEY,
+  apiBaseUrl: process.env.VUE_APP_API_BASE_URL,
+
+  disableDingTalk: process.env.NODE_ENV === 'development',
 };
