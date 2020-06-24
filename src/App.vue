@@ -6,7 +6,14 @@
         Please contact <a href="mailto:wangwii@foxmail.com">Administrator</a>
       </p>
     </div>
-    <van-nav-bar v-if="ready" @click-right="onClickRight">
+    <van-nav-bar v-if="ready" @click-right="onClickRight" @click-left="goBack">
+      <template #left>
+        <van-image round width="30px" height="30px" name="iconBack" :src="iconBack">
+          </van-image>返回
+      </template>
+      <template #title>
+        河湖问题提交
+      </template>
       <template #right>
         用户名｜<van-image round width="40px" height="40px" name="icon" :src="icon"></van-image>
       </template>
@@ -69,7 +76,7 @@ export default {
       ready: false,
       hasErrors: true,
       status: 'Not in DingTalk environment!',
-
+      iconBack: '../img/back.png',
       icon: 'https://tva3.sinaimg.cn/crop.2.2.363.363.180/c23430b4tw1el1fpw55y8j20a70a73zt.jpg',
     };
   },
@@ -105,6 +112,14 @@ export default {
     onClickRight() {
       if (this.$route.path === '/profile') return;
       this.$router.push('/profile');
+    },
+    goBack() {
+      this.$router.go(-1);
+    },
+    goList() {
+      alert('111');
+      if (this.$route.path === '/list') return;
+      this.$router.push('/list');
     },
   },
 };

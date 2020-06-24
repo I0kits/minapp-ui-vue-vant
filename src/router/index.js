@@ -9,7 +9,7 @@ Vue.use(VueRouter);
 
 const routes = [
   {
-    path: '/',
+    path: '/main',
     name: 'Main',
     component: Main,
   },
@@ -19,9 +19,14 @@ const routes = [
     component: () => import('../views/Profile.vue'),
   },
   {
-    path: '/report',
+    path: '/',
     name: 'Report',
     component: () => import('../views/Report.vue'),
+  },
+  {
+    path: '/issueList',
+    name: 'IssueList',
+    component: () => import('../views/IssueList.vue'),
   },
 ];
 

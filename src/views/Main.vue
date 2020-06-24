@@ -1,6 +1,7 @@
 <template>
   <div id="amap-page-container">
   </div>
+
 </template>
 
 <style lang="less" scoped>
@@ -43,8 +44,7 @@ export default {
       const { lnglat } = ev;
       console.log(`${window.mymap.getZoom()}:`, lnglat);
       console.log('Now the center is:', window.mymap.getCenter());
-
-      this.$router.push('/report');
+      this.$router.push('/');
     });
 
     const markers = this.markers.map((m) => new window.AMap.Marker({

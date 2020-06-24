@@ -2,21 +2,30 @@
   <div class="report">
     <van-form @submit="onSubmit">
       <van-cell-group>
-        <van-field
-          v-model="position"
-          name="position"
-          label="位置"
-          placeholder="问题所在位置"
-          :rules="[{ required: true, message: '问题所在位置必须填写.' }]">
-        </van-field>
-
-        <van-field
-          v-model="name"
-          name="name"
-          label="名称"
-          placeholder="对应河湖名称"
-          :rules="[{ required: true, message: '河湖名称必须填写.' }]">
-        </van-field>
+        <van-cell>
+          <van-col span="20">
+            <van-field
+              v-model="position"
+              name="position"
+              label="位置"
+              placeholder="问题所在位置"
+              :rules="[{ required: true, message: '问题所在位置必须填写.' }]">
+            </van-field>
+          </van-col>
+          <van-col>
+            <van-button @click="onLocationClicked">定位
+            </van-button>
+          </van-col>
+        </van-cell>
+        <van-cell>
+          <van-field
+            v-model="name"
+            name="name"
+            label="名称"
+            placeholder="对应河湖名称"
+            :rules="[{ required: true, message: '河湖名称必须填写.' }]">
+          </van-field>
+        </van-cell>
       </van-cell-group>
 
       <van-cell-group>
@@ -38,9 +47,11 @@
         <van-popup v-model="showPicker" position="bottom">
           <van-picker
             show-toolbar
-            :columns="issueTypes"
+            :columns="columns"
+            @change="onChange"
             @confirm="onConfirm"
             @cancel="showPicker = false"></van-picker>
+
         </van-popup>
 
         <van-field
@@ -76,7 +87,13 @@
           提交
         </van-button>
       </div>
+
     </van-form>
+    <div style="margin: 16px;">
+      <van-button round block type="primary" @click="goList">
+        问题列表
+      </van-button>
+    </div>
   </div>
 </template>
 
@@ -86,8 +103,16 @@
 <script>
 import {
   Button, Icon, Form, Field, Cell, CellGroup, TreeSelect, Picker, Popup, Uploader,
-  RadioGroup, Radio, Checkbox, CheckboxGroup,
+  RadioGroup, Radio, Checkbox, CheckboxGroup, Col,
 } from 'vant';
+
+const issueTypes = {
+  水面水体问题: ['1漂浮垃圾', '1河底垃圾', '1水体异味', '1颜色异常'],
+  排污问题: ['2漂浮垃圾', '2河底垃圾', '2水体异味', '2颜色异常'],
+  岸线四乱: ['3漂浮垃圾', '3河底垃圾', '3水体异味', '3颜色异常'],
+  设施问题: ['4漂浮垃圾', '4河底垃圾', '4水体异味', '4颜色异常'],
+  非法行为: ['5漂浮垃圾', '5河底垃圾', '5水体异味', '5颜色异常'],
+};
 
 export default {
   name: 'Report',
@@ -106,9 +131,11 @@ export default {
     [RadioGroup.name]: RadioGroup,
     [TreeSelect.name]: TreeSelect,
     [CheckboxGroup.name]: CheckboxGroup,
+    [Col.name]: Col,
   },
   data() {
     return {
+      columns: [{ values: Object.keys(issueTypes) }, { values: issueTypes['水面水体问题'] }],
       name: '',
       position: '',
       images: [],
@@ -120,7 +147,6 @@ export default {
       pingOthers: false,
 
       showPicker: false,
-      issueTypes: ['水面问题', '水体问题', '其它问题'],
       categoryValues: [
         { id: 10, text: '漂浮辣椒', category: '水面问题' },
         { id: 11, text: '漂浮辣椒', category: '水面问题' },
@@ -143,6 +169,15 @@ export default {
       console.log(`当前值：${value}, 当前索引：${index}`);
       this.issueType = value;
       this.showPicker = false;
+    },
+    onChange(picker, values) {
+      picker.setColumnValues(1, issueTypes[values[0]]);
+    },
+    onLocationClicked() {
+      this.$router.push('/main');
+    },
+    goList() {
+      this.$router.push('/issueList');
     },
   },
 };
