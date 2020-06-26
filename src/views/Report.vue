@@ -64,7 +64,7 @@
             readonly
             clickable
             name="issueTypeName"
-            :value="issueType"
+            :value="issueTypeName"
             placeholder="点击选择问题类型"
             @click="showIssueType = true"></van-field>
           <van-popup v-model="showIssueType" position="bottom">
@@ -87,6 +87,7 @@
             rows="2"
             autosize
             clearable
+            name="issueDesc"
             type="textarea"
             maxlength="100"
             show-word-limit
@@ -114,14 +115,13 @@
       </van-cell>
 
       <!--notifyOthers 是否通知相关上下游人员,选择是则会出发建群操作-->
-      <!--processType 处理方式单项选择-->
       <van-cell>
         <!-- 使用 title 插槽来自定义标题 -->
         <template slot="title">
           <div align="left" style="padding-left: 17px;">是否通知相关人员：</div>
           <van-field name="notifyOthers" >
             <template #input>
-              <van-radio-group v-model="pingOthers" direction="horizontal">
+              <van-radio-group v-model="notifyOthers" direction="horizontal">
                 <van-radio name="1">是</van-radio>
                 <van-radio name="0">否</van-radio>
               </van-radio-group>
@@ -129,12 +129,10 @@
           </van-field>
         </template>
       </van-cell>
-      <div style="margin: 16px;">
-        <van-button round block type="info" native-type="submit">
-          提交
-        </van-button>
-      </div>
 
+      <div style="margin: 16px;">
+        <van-button round block type="info" native-type="submit">提交</van-button>
+      </div>
     </van-form>
     <div style="margin: 16px;">
       <van-button round block type="primary" @click="goList">
@@ -148,6 +146,7 @@
 </style>
 
 <script>
+// import _ from 'lodash';
 import {
   Button, Form, Cell, Field, Picker, Popup, Uploader, RadioGroup, Radio, Checkbox, CheckboxGroup,
 } from 'vant';
@@ -169,22 +168,25 @@ export default {
       position: '',
       latitude: 0,
       longitude: 0,
+
       riverName: '',
-      riverList: ['村田河地杨村段', '下梅溪地杨村段', '梅宁河地杨村段'],
       showRiver: false,
+      riverList: ['村田河地杨村段', '下梅溪地杨村段', '梅宁河地杨村段'],
       images: [],
-      issueType: '',
-      issueTypeList: [{ values: Object.keys(issueTypes) }, { values: issueTypes['水面水体问题'] }],
+
+      issueTypeName: '',
       showIssueType: false,
+      issueTypeList: [{ values: Object.keys(issueTypes) }, { values: issueTypes['水面水体问题'] }],
+
       issueDesc: '',
       processType: '',
-      pingOthers: false,
-
-      loggers: '',
+      notifyOthers: false,
     };
   },
+  computed: {
+  },
   mounted() {
-    this.fetchCurrentPosition();
+    setTimeout(this.fetchCurrentPosition, 500);
   },
   components: {
     [Cell.name]: Cell,
@@ -218,12 +220,21 @@ export default {
     },
     onSubmit(values) {
       console.log('submit', values);
-      this.$router.push('/');
+      // TODO: save data to [SERVER]
+
+      // if (this.notifyOthers) {
+      //   dd.createChatGroup([]).then((ret) => {
+      //     const chatGroupId = ret.id;
+      //     this.errorMessage = `Got Chat Group: ${chatGroupId}`;
+      //   }).catch((err) => {
+      //     this.errorMessage = err;
+      //   });
+      // }
+      // this.goList();
     },
     onIssueConfirm(value) {
-      console.log(`当前值：${value}`);
-      this.issueType = value;
       this.showIssueType = false;
+      this.issueTypeName = value.join(',');
     },
     onIssueChange(picker, values) {
       picker.setColumnValues(1, issueTypes[values[0]]);
@@ -235,8 +246,10 @@ export default {
     onRiverChange(value) {
       this.riverName = value;
     },
+    goList() {
+      this.$router.push('/issue-list');
+    },
     onLocationClicked() {
-      // this.$router.push('/main');
       dd.choosePosition(this.latitude, this.longitude)
         .then((dat) => {
           this.latitude = dat.latitude;
@@ -247,8 +260,8 @@ export default {
           this.position = `ERR - ${JSON.stringify(err)}`;
         });
     },
-    goList() {
-      this.$router.push('/issue-list');
+    onNotifyOthersChange(name) {
+      this.notifyOthers = parseInt(name, 10) === 0;
     },
   },
 };

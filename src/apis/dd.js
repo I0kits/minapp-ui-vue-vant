@@ -26,6 +26,7 @@ const jsApiList = [
   'device.base.getUUID',
   'device.geolocation.get',
   'biz.chat.toConversation',
+  'biz.contact.createGroup',
   'biz.chat.openSingleChat',
   'device.geolocation.stop',
   'device.geolocation.start',
@@ -33,10 +34,11 @@ const jsApiList = [
   'biz.clipboardData.setData',
   'biz.util.uploadAttachment',
   'biz.cspace.chooseSpaceDir',
+  'biz.chat.pickConversation',
+  'biz.contact.complexPicker',
   'biz.telephone.checkBizCall',
   'biz.telephone.showCallMenu',
   'biz.telephone.quickCallList',
-  'biz.chat.pickConversation',
   'biz.chat.chooseConversationByCorpId',
   'runtime.permission.requestOperateAuthCode',
 ];
@@ -107,6 +109,33 @@ export default {
     return new Promise((onSuccess, onFail) => {
       ding.biz.map.locate({
         latitude, longitude, onSuccess, onFail,
+      });
+    });
+  },
+  chooseUsers() {
+    return new Promise((onSuccess, onFail) => {
+      ding.biz.contact.complexPicker({
+        onFail,
+        onSuccess,
+        title: '请选择相关人员',
+        appId: conf.agentId,
+        corpId: conf.corpId,
+        multiple: true,
+        maxUsers: 200,
+        pickedUsers: [],
+        pickedDepartments: [],
+        disabledUsers: [],
+        disabledDepartments: [],
+        requiredUsers: [],
+        requiredDepartments: [],
+        responseUserOnly: true,
+      });
+    });
+  },
+  createChatGroup(users) {
+    return new Promise((onSuccess, onFail) => {
+      ding.biz.contact.createGroup({
+        users, onFail, onSuccess, corpId: conf.corpId,
       });
     });
   },

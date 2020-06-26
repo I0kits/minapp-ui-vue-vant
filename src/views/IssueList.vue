@@ -4,15 +4,11 @@
       报告新问题
     </van-button>
     <van-pull-refresh v-model="refreshing" @refresh="onRefresh">
-      <van-list
-        v-model="loading"
-        :finished="finished"
-        finished-text="下拉加载更多"
-        @load="onLoad">
+      <van-list v-model="loading" :finished="finished" finished-text="" @load="onLoad">
         <van-grid direction="horizontal" :column-num="1" icon-size="38px">
-          <van-cell icon="location-o" v-for="item in list" :key="item"
-                   :label="item.submitter" :title="item.desc" is-link value="详情"
-                    to="/issue-detail" />
+          <van-cell v-for="item in items" :key="item.id" :label="item.submitter"
+              icon="location-o" :title="item.desc" is-link value="详情" to="/issue-detail">
+          </van-cell>
         </van-grid>
       </van-list>
     </van-pull-refresh>
@@ -30,36 +26,41 @@ import {
   Button, Icon, List, PullRefresh, Cell, Grid, GridItem,
 } from 'vant';
 
-const issueList = [
-  { desc: '水面有漂浮物垃圾', submitter: '提交人：王孟，提交时间：2020-06-27 12:22:54' },
-  { desc: '河岸四处都有生活垃圾', submitter: '提交人：李磊，提交时间：2020-06-25 10:12:22' },
-  { desc: '有工厂在私自排污', submitter: '提交人：张峰，提交时间：2020-06-24 09:31:13' },
-];
-
 export default {
   components: {
-    [List.name]: List,
-    [Button.name]: Button,
-    [Icon.name]: Icon,
-    [PullRefresh.name]: PullRefresh,
     [Cell.name]: Cell,
+    [Icon.name]: Icon,
+    [List.name]: List,
     [Grid.name]: Grid,
+    [Button.name]: Button,
     [GridItem.name]: GridItem,
+    [PullRefresh.name]: PullRefresh,
   },
   data() {
     return {
-      submitterPro: '提交人:',
-      list: issueList,
       loading: false,
       finished: false,
       refreshing: false,
+      list: this.$store.state.issues,
     };
+  },
+  computed: {
+    items() {
+      return this.list.map((issue) => {
+        const { id, riverName, submitter } = issue;
+        return {
+          id,
+          desc: `${riverName}，${issue.desc}`,
+          submitter: `提交人：${submitter} ${issue.time}`,
+        };
+      });
+    },
   },
   methods: {
     onLoad() {
       if (this.refreshing) {
-        this.list = issueList;
         this.refreshing = false;
+        this.list = this.$store.state.issues;
       }
       this.loading = false;
       this.finished = true;
