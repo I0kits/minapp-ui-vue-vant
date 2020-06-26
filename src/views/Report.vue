@@ -1,6 +1,7 @@
 <template>
   <div class="report">
     <van-form @submit="onSubmit">
+      <div style.display = "none" name="submitter"></div>
       <!-- position 问题所在位置由地图定位选择后填入-->
       <van-cell>
         <!-- 使用 title 插槽来自定义标题 -->
@@ -86,6 +87,7 @@
           <van-field
             rows="2"
             autosize
+            name="issueDesc"
             clearable
             type="textarea"
             maxlength="100"
@@ -217,7 +219,11 @@ export default {
       });
     },
     onSubmit(values) {
-      console.log('submit', values);
+      const myValues = values;
+      const timeStr = new Date().toLocaleString('chinese', { hour12: false });
+      console.log('submit', new Date().toLocaleString('chinese', { hour12: false }));
+      myValues.submitter = `提交人：张磊，提交时间：${timeStr}`;
+      this.localData('set', 'report', myValues);
       this.$router.push('/');
     },
     onIssueConfirm(value) {

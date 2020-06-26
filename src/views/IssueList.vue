@@ -11,7 +11,7 @@
         @load="onLoad">
         <van-grid direction="horizontal" :column-num="1" icon-size="38px">
           <van-cell icon="location-o" v-for="item in list" :key="item"
-                   :label="item.submitter" :title="item.desc" is-link value="详情"
+                   :label="item.submitter" :title="item.issueDesc" is-link value="详情"
                     to="/issue-detail" />
         </van-grid>
       </van-list>
@@ -31,9 +31,9 @@ import {
 } from 'vant';
 
 const issueList = [
-  { desc: '水面有漂浮物垃圾', submitter: '提交人：王孟，提交时间：2020-06-27 12:22:54' },
-  { desc: '河岸四处都有生活垃圾', submitter: '提交人：李磊，提交时间：2020-06-25 10:12:22' },
-  { desc: '有工厂在私自排污', submitter: '提交人：张峰，提交时间：2020-06-24 09:31:13' },
+  { issueDesc: '水面有漂浮物垃圾', submitter: '提交人：王孟，提交时间：2020/06/27 12:22:54' },
+  { issueDesc: '河岸四处都有生活垃圾', submitter: '提交人：李磊，提交时间：2020/06/25 10:12:22' },
+  { issueDesc: '有工厂在私自排污', submitter: '提交人：张峰，提交时间：2020/06/24 09:31:13' },
 ];
 
 export default {
@@ -58,6 +58,7 @@ export default {
   methods: {
     onLoad() {
       if (this.refreshing) {
+        issueList.push(this.localData('get', 'report', null));
         this.list = issueList;
         this.refreshing = false;
       }
