@@ -3,21 +3,20 @@
     <div id="tips" v-if="!ready" v-bind:class="{ error: hasErrors }">
       <p>{{status}}</p>
       <p v-if="hasErrors">
-        Please contact <a href="mailto:wangwii@foxmail.com">Administrator</a>
+        Please use Dingtalk or contact
+        <a href="mailto:wangwii@foxmail.com">Developer.</a>
       </p>
     </div>
+
     <van-nav-bar v-if="ready" @click-right="onClickRight" @click-left="goBack">
-      <template #left>
-        <van-image round width="30px" height="30px" name="iconBack" :src="iconBack">
-          </van-image>返回
-      </template>
-      <template #title>
-        河湖问题提交
-      </template>
       <template #right>
-        用户名｜<van-image round width="40px" height="40px" name="icon" :src="icon"></van-image>
+        {{$store.state.user.name}}｜
+        <van-image round width="40px" height="40px" name="icon"
+           :src="$store.state.user.avatar">
+        </van-image>
       </template>
     </van-nav-bar>
+
     <div v-if="ready" class="van-hairline--bottom"></div>
     <router-view v-if="ready"/>
   </div>
@@ -59,11 +58,10 @@
 </style>
 
 <script>
-import * as dd from 'dingtalk-jsapi';
 import { NavBar, Image } from 'vant';
 
 import conf from './conf';
-import Apis from './apis';
+import dd from './apis/dd';
 
 export default {
   name: 'App',
@@ -76,15 +74,13 @@ export default {
       ready: false,
       hasErrors: true,
       status: 'Not in DingTalk environment!',
-      iconBack: '../img/back.png',
-      icon: 'https://tva3.sinaimg.cn/crop.2.2.363.363.180/c23430b4tw1el1fpw55y8j20a70a73zt.jpg',
     };
   },
   mounted() {
     if (conf.disableDingTalk) {
       this.skipEnvCheck();
     } else {
-      dd.ready(this.initDingtalkEnv);
+      this.initDingtalkEnv();
     }
   },
   methods: {
@@ -92,22 +88,35 @@ export default {
       this.ready = true;
       this.hasErrors = false;
       this.status = 'Skip runtime env check...';
+      this.$router.push('/issue-list');
     },
     initDingtalkEnv() {
-      // disable right menu
-      dd.biz.navigation.setRight({ show: false, control: false });
-
-      // reset error styles.
-      this.hasErrors = false;
-      this.status = 'Loading user information...';
-
-      // loading the user information
-      Apis.getUserInfo(conf.corpId).subscribe((dat) => {
-        this.status = `INFO: ${JSON.stringify(dat.data)}`;
-        this.ready = true;
-      }, (err) => {
-        this.status = `ERRO: ${JSON.stringify(err)}`;
+      dd.init().then(() => {
+        this.hasErrors = false;
+        this.status = 'Loading user information...';
+        dd.loadUserInfo().then((usr) => {
+          this.$store.commit('updateUserInfo', usr.data);
+          this.status = `USR-INFO: ${JSON.stringify(this.$store.state.user)}`;
+          this.configJsApisSign(window.location.href);
+        }).catch((err) => {
+          this.hasErrors = true;
+          this.status = `ERR: ${JSON.stringify(err)}`;
+        });
       });
+    },
+    configJsApisSign(url) {
+      this.status = 'Setup js-apis permission...';
+      const setup = () => dd.configJsApis(url)
+        .then((dat) => {
+          // this.status = `SIGN-DAT: ${JSON.stringify(dat.data)}`;
+          this.status = `Setup js-apis permission done: [${dat.data.jsApiList.length}].`;
+        })
+        .catch((error) => {
+          this.status = `SIGN-ERR: ${JSON.stringify(error)}`;
+        });
+
+      setTimeout(setup, 10);
+      setTimeout(() => { this.ready = true; }, 3000);
     },
     onClickRight() {
       if (this.$route.path === '/profile') return;

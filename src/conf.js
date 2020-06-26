@@ -1,7 +1,8 @@
 export default {
   corpId: process.env.VUE_APP_CORP_ID,
-  amapKey: process.env.VUE_APP_AMAP_KEY,
+  agentId: process.env.VUE_APP_VUE_APP_AGENT_ID,
   apiBaseUrl: process.env.VUE_APP_API_BASE_URL,
 
-  disableDingTalk: process.env.NODE_ENV === 'development',
+  disableDingTalk: true,
+  debug: process.env.NODE_ENV === 'development',
 };

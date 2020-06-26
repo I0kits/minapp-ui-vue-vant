@@ -1,15 +1,17 @@
 <template>
-  <div class="list">
+  <div class="issue-list">
+    <van-button type="primary" icon="add-o" @click="onReportNewIssue">
+      报告新问题
+    </van-button>
     <van-pull-refresh v-model="refreshing" @refresh="onRefresh">
       <van-list
         v-model="loading"
         :finished="finished"
         finished-text="下拉加载更多"
-        @load="onLoad"
-      >
+        @load="onLoad">
         <van-grid direction="horizontal" :column-num="1">
           <van-grid-item v-for="item in list" :key="item.id"
-                         icon="photo-o" :text="item.desc" to="/issueDetail" >
+                         icon="photo-o" :text="item.desc" to="/issue-detail" >
           </van-grid-item>
         </van-grid>
       </van-list>
@@ -18,6 +20,9 @@
 </template>
 
 <style scoped lang="less">
+.issue-list {
+  text-align: left;
+}
 </style>
 
 <script>
@@ -82,6 +87,9 @@ export default {
       // 将 loading 设置为 true，表示处于加载状态
       this.loading = true;
       this.onLoad();
+    },
+    onReportNewIssue() {
+      this.$router.push('/report');
     },
   },
 };

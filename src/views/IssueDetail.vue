@@ -74,7 +74,7 @@
       </van-step>
     </van-steps>
     <div style="margin: 16px;">
-      <van-button round block type="primary" to="/issueList">
+      <van-button round block type="primary" to="/issue-list">
         返回
       </van-button>
     </div>

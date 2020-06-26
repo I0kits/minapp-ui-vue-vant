@@ -138,7 +138,7 @@
     </van-form>
     <div style="margin: 16px;">
       <van-button round block type="primary" @click="goList">
-        问题列表
+        返回
       </van-button>
     </div>
   </div>
@@ -149,9 +149,10 @@
 
 <script>
 import {
-  Button, Icon, Form, Field, Cell, CellGroup, TreeSelect, Picker, Popup, Uploader,
-  RadioGroup, Radio, Checkbox, CheckboxGroup, Col,
+  Button, Form, Cell, Field, Picker, Popup, Uploader, RadioGroup, Radio, Checkbox, CheckboxGroup,
 } from 'vant';
+
+import dd from '../apis/dd';
 
 const issueTypes = {
   水面水体问题: ['1漂浮垃圾', '1河底垃圾', '1水体异味', '1颜色异常'],
@@ -163,26 +164,11 @@ const issueTypes = {
 
 export default {
   name: 'Report',
-  components: {
-    [Icon.name]: Icon,
-    [Cell.name]: Cell,
-    [Form.name]: Form,
-    [Popup.name]: Popup,
-    [Radio.name]: Radio,
-    [Field.name]: Field,
-    [Button.name]: Button,
-    [Picker.name]: Picker,
-    [Checkbox.name]: Checkbox,
-    [Uploader.name]: Uploader,
-    [CellGroup.name]: CellGroup,
-    [RadioGroup.name]: RadioGroup,
-    [TreeSelect.name]: TreeSelect,
-    [CheckboxGroup.name]: CheckboxGroup,
-    [Col.name]: Col,
-  },
   data() {
     return {
       position: '',
+      latitude: 0,
+      longitude: 0,
       riverName: '',
       riverList: ['村田河地杨村段', '下梅溪地杨村段', '梅宁河地杨村段'],
       showRiver: false,
@@ -193,9 +179,43 @@ export default {
       issueDesc: '',
       processType: '',
       pingOthers: false,
+
+      loggers: '',
     };
   },
+  mounted() {
+    this.fetchCurrentPosition();
+  },
+  components: {
+    [Cell.name]: Cell,
+    [Form.name]: Form,
+    [Popup.name]: Popup,
+    [Radio.name]: Radio,
+    [Field.name]: Field,
+    [Button.name]: Button,
+    [Picker.name]: Picker,
+    [Checkbox.name]: Checkbox,
+    [Uploader.name]: Uploader,
+    [RadioGroup.name]: RadioGroup,
+    [CheckboxGroup.name]: CheckboxGroup,
+  },
   methods: {
+    fetchCurrentPosition() {
+      this.position = '定位中....';
+      dd.currentPosition().then((dat) => {
+        const { errorCode, errorMessage } = dat;
+        if (errorCode > 0) {
+          this.position = `定位失败：[${errorCode}] - ${errorMessage}`;
+          return;
+        }
+
+        this.latitude = dat.latitude;
+        this.longitude = dat.longitude;
+        this.position = `${dat.address}`;
+      }).catch((err) => {
+        this.position = `ERR - ${JSON.stringify(err)}`;
+      });
+    },
     onSubmit(values) {
       console.log('submit', values);
       this.$router.push('/');
@@ -216,10 +236,19 @@ export default {
       this.riverName = value;
     },
     onLocationClicked() {
-      this.$router.push('/main');
+      // this.$router.push('/main');
+      dd.choosePosition(this.latitude, this.longitude)
+        .then((dat) => {
+          this.latitude = dat.latitude;
+          this.longitude = dat.longitude;
+          this.position = `${dat.title}`;
+        })
+        .catch((err) => {
+          this.position = `ERR - ${JSON.stringify(err)}`;
+        });
     },
     goList() {
-      this.$router.push('/issueList');
+      this.$router.push('/issue-list');
     },
   },
 };

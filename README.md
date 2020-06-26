@@ -1,6 +1,7 @@
 # minapp-ui-vue
+(原型页面：https://minapp.aibaby.online/heliuding/start.html)
 
-钉钉H5微应用:
+### H5应用入口:
 * https://smart-shuili.surge.sh
 * https://minapp.aibaby.online/vue-vant-vapp/index.html
 
@@ -20,6 +21,12 @@
 * [x] vApp接入钉钉组织，组织内人员可访问；
 * [] vApp 识别当前用户身份信息，并显示用户信息；
 * [] 开通智能表单API访问权限
+
+
+### pierced Tools
+```
+  ./ding -config=./ding.cfg -subdomain=smart-shuili-rex 8080
+```
 
 ### Frameworks
 * https://uniapp.dcloud.io
