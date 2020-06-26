@@ -58,19 +58,37 @@
     </van-collapse>
     <van-steps direction="vertical" :active="2">
       <van-step>
-          <h3>【张三】巡河人员</h3>
-          <p>上报问题(已提交)</p>
-          <p>2020-06-27 12:40</p>
+        <van-image
+          round
+          width="5rem"
+          height="5rem"
+          :src="require('../assets/touxiang1.jpg')"
+        />
+        <h3>【张萧萧】巡河人员</h3>
+        <p>上报问题(已提交)</p>
+        <p>2020-06-27 12:40</p>
       </van-step>
       <van-step>
-          <h3>【李四】河长办</h3>
-          <p>转发问题(已处理)</p>
-          <p>2020-06-28 10:00</p>
+        <van-image
+          round
+          width="5rem"
+          height="5rem"
+          :src="require('../assets/touxiang2.jpg')"
+        />
+        <h3>【李峰】河长办</h3>
+        <p>转发问题(已处理)</p>
+        <p>2020-06-28 10:00</p>
       </van-step>
       <van-step>
-          <h3>【王五】县水利局</h3>
-          <p>受理问题(处理中)</p>
-          <p>2020-06-29 09:30</p>
+        <van-image
+          round
+          width="5rem"
+          height="5rem"
+          :src="require('../assets/touxiang3.jpg')"
+        />
+        <h3>【王雪梅】县水利局</h3>
+        <p>受理问题(处理中)</p>
+        <p>2020-06-29 09:30</p>
       </van-step>
     </van-steps>
     <div style="margin: 16px;">

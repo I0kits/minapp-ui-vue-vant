@@ -9,10 +9,10 @@
         :finished="finished"
         finished-text="下拉加载更多"
         @load="onLoad">
-        <van-grid direction="horizontal" :column-num="1">
-          <van-grid-item v-for="item in list" :key="item.id"
-                         icon="photo-o" :text="item.desc" to="/issue-detail" >
-          </van-grid-item>
+        <van-grid direction="horizontal" :column-num="1" icon-size="38px">
+          <van-cell icon="location-o" v-for="item in list" :key="item"
+                   :label="item.submitter" :title="item.desc" is-link value="详情"
+                    to="/issue-detail" />
         </van-grid>
       </van-list>
     </van-pull-refresh>
@@ -31,15 +31,9 @@ import {
 } from 'vant';
 
 const issueList = [
-  { desc: '漂浮垃圾11', time: '2020-06-26 22:22:22', submitter: '王小二' },
-  { desc: '漂浮垃圾22', time: '2020-06-25 22:22:22', submitter: '李磊' },
-  { desc: '漂浮垃圾33', time: '2020-06-24 22:22:22', submitter: '张三' },
-  { desc: '漂浮垃圾11', time: '2020-06-26 22:22:22', submitter: '王小二' },
-  { desc: '漂浮垃圾22', time: '2020-06-25 22:22:22', submitter: '李磊' },
-  { desc: '漂浮垃圾33', time: '2020-06-24 22:22:22', submitter: '张三' },
-  { desc: '漂浮垃圾11', time: '2020-06-26 22:22:22', submitter: '王小二' },
-  { desc: '漂浮垃圾22', time: '2020-06-25 22:22:22', submitter: '李磊' },
-  { desc: '漂浮垃圾33', time: '2020-06-24 22:22:22', submitter: '张三' },
+  { desc: '水面有漂浮物垃圾', submitter: '提交人：王孟，提交时间：2020-06-27 12:22:54' },
+  { desc: '河岸四处都有生活垃圾', submitter: '提交人：李磊，提交时间：2020-06-25 10:12:22' },
+  { desc: '有工厂在私自排污', submitter: '提交人：张峰，提交时间：2020-06-24 09:31:13' },
 ];
 
 export default {
@@ -54,7 +48,7 @@ export default {
   },
   data() {
     return {
-      myTitle: '河湖问题列表',
+      submitterPro: '提交人:',
       list: issueList,
       loading: false,
       finished: false,
@@ -63,16 +57,6 @@ export default {
   },
   methods: {
     onLoad() {
-      // setTimeout(() => {
-      //   if (this.refreshing) {
-      //     this.list = [];
-      //     this.refreshing = false;
-      //   }
-      //   this.list.push(1);
-      //   this.loading = false;
-      //
-      //   this.finished = true;
-      // }, 1000);
       if (this.refreshing) {
         this.list = issueList;
         this.refreshing = false;
