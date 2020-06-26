@@ -8,7 +8,7 @@
       </p>
     </div>
 
-    <van-nav-bar v-if="ready" @click-right="onClickRight" @click-left="goBack">
+    <van-nav-bar v-if="ready" @click-right="onClickRight">
       <template #right>
         {{$store.state.user.name}}｜
         <van-image round width="40px" height="40px" name="icon"
@@ -18,7 +18,8 @@
     </van-nav-bar>
 
     <div v-if="ready" class="van-hairline--bottom"></div>
-    <router-view v-if="ready"/>
+
+    <router-view v-if="ready"></router-view>
   </div>
 </template>
 
@@ -88,7 +89,6 @@ export default {
       this.ready = true;
       this.hasErrors = false;
       this.status = 'Skip runtime env check...';
-      this.$router.push('/issue-list');
     },
     initDingtalkEnv() {
       dd.init().then(() => {
@@ -121,14 +121,6 @@ export default {
     onClickRight() {
       if (this.$route.path === '/profile') return;
       this.$router.push('/profile');
-    },
-    goBack() {
-      this.$router.go(-1);
-    },
-    goList() {
-      alert('111');
-      if (this.$route.path === '/list') return;
-      this.$router.push('/list');
     },
   },
 };
