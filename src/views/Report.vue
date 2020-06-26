@@ -1,87 +1,134 @@
 <template>
   <div class="report">
     <van-form @submit="onSubmit">
-      <van-cell-group>
-        <van-cell>
-          <van-col span="20">
-            <van-field
-              v-model="position"
-              name="position"
-              label="位置"
-              placeholder="问题所在位置"
-              :rules="[{ required: true, message: '问题所在位置必须填写.' }]">
-            </van-field>
-          </van-col>
-          <van-col>
-            <van-button @click="onLocationClicked">定位
-            </van-button>
-          </van-col>
-        </van-cell>
-        <van-cell>
+      <!-- position 问题所在位置由地图定位选择后填入-->
+      <van-cell>
+        <!-- 使用 title 插槽来自定义标题 -->
+        <template slot="title">
+          <div align="left" style="padding-left: 17px;">位置：</div>
           <van-field
-            v-model="name"
-            name="name"
-            label="名称"
-            placeholder="对应河湖名称"
-            :rules="[{ required: true, message: '河湖名称必须填写.' }]">
+            v-model="position"
+            offset="0"
+            name="position"
+            clearable
+            right-icon="location-o"
+            @click-right-icon="onLocationClicked"
+            placeholder="问题所在位置"
+            :rules="[{ required: true, message: '问题所在位置必须填写.' }]">
           </van-field>
-        </van-cell>
-      </van-cell-group>
-
-      <van-cell-group>
-        <van-field name="uploader" label="问题图片">
-          <template #input>
-            <van-uploader v-model="images" />
-          </template>
-        </van-field>
-
-        <van-field
-          readonly
-          clickable
-          name="picker1"
-          :value="issueType"
-          label="问题类型"
-          placeholder="点击选择问题类型"
-          @click="showPicker = true"></van-field>
-
-        <van-popup v-model="showPicker" position="bottom">
-          <van-picker
-            show-toolbar
-            :columns="columns"
-            @change="onChange"
-            @confirm="onConfirm"
-            @cancel="showPicker = false"></van-picker>
-
-        </van-popup>
-
-        <van-field
-          rows="2"
-          autosize
-          label="问题描述"
-          type="textarea"
-          maxlength="100"
-          show-word-limit
-          v-model="issueDesc"
-          placeholder="请输入问题描述"></van-field>
-
-        <van-field name="processType" label="处理方式">
-          <template #input>
-            <van-radio-group v-model="processType" direction="horizontal">
-              <van-radio name="1">自行处理</van-radio>
-              <van-radio name="2">上报河长</van-radio>
-              <van-radio name="3">转交他人</van-radio>
-              <van-radio name="4">河长协调</van-radio>
-            </van-radio-group>
-          </template>
-        </van-field>
-      </van-cell-group>
-
-      <van-field name="pingOthers" label="复选框">
-        <template #input>
-          <van-checkbox v-model="pingOthers" shape="square">是否通知相关人员？</van-checkbox>
         </template>
-      </van-field>
+      </van-cell>
 
+      <!--riverAddress 问题河流对应村落地址-->
+      <van-cell>
+        <!-- 使用 title 插槽来自定义标题 -->
+        <template slot="title">
+          <div align="left" style="padding-left: 17px;">对应河湖：</div>
+          <van-field
+            readonly
+            clickable
+            name="riverPicker"
+            :value="riverName"
+            placeholder="点击选择对应河湖"
+            @click="showRiver = true"></van-field>
+
+          <van-popup v-model="showRiver" position="bottom">
+            <van-picker
+              show-toolbar
+              :columns="riverList"
+              @confirm="onRiverConfirm"
+              @cancel="showRiver = false"></van-picker>
+          </van-popup>
+        </template>
+      </van-cell>
+
+      <!--issuePic 问题图片上传-->
+      <van-cell>
+        <!-- 使用 title 插槽来自定义标题 -->
+        <template slot="title">
+          <div align="left" style="padding-left: 17px;">问题图片：</div>
+          <van-field name="uploader">
+            <template #input>
+              <van-uploader v-model="images" />
+            </template>
+          </van-field>
+        </template>
+      </van-cell>
+
+      <!--issueType 问题类型下拉选择-->
+      <van-cell>
+        <!-- 使用 title 插槽来自定义标题 -->
+        <template slot="title">
+          <div align="left" style="padding-left: 17px;">问题类型：</div>
+          <van-field
+            readonly
+            clickable
+            name="issueTypeName"
+            :value="issueType"
+            placeholder="点击选择问题类型"
+            @click="showIssueType = true"></van-field>
+          <van-popup v-model="showIssueType" position="bottom">
+            <van-picker
+              show-toolbar
+              :columns="issueTypeList"
+              @change="onIssueChange"
+              @confirm="onIssueConfirm"
+              @cancel="showIssueType = false"></van-picker>
+          </van-popup>
+        </template>
+      </van-cell>
+
+      <!--issueDesc 问题描述用户输入-->
+      <van-cell>
+        <!-- 使用 title 插槽来自定义标题 -->
+        <template slot="title">
+          <div align="left" style="padding-left: 17px;">问题描述：</div>
+          <van-field
+            rows="2"
+            autosize
+            clearable
+            type="textarea"
+            maxlength="100"
+            show-word-limit
+            v-model="issueDesc"
+            placeholder="请输入问题描述"></van-field>
+        </template>
+      </van-cell>
+
+      <!--processType 处理方式单项选择-->
+      <van-cell>
+        <!-- 使用 title 插槽来自定义标题 -->
+        <template slot="title">
+          <div align="left" style="padding-left: 17px;">处理方式：</div>
+          <van-field name="processType" >
+            <template #input>
+              <van-radio-group v-model="processType" direction="horizontal">
+                <van-radio name="1">自行处理</van-radio>
+                <van-radio name="2">上报河长</van-radio>
+                <van-radio name="3">转交他人</van-radio>
+                <van-radio name="4">河长协调</van-radio>
+              </van-radio-group>
+            </template>
+          </van-field>
+        </template>
+      </van-cell>
+
+      <!--notifyOthers 是否通知相关上下游人员,选择是则会出发建群操作-->
+      <!--processType 处理方式单项选择-->
+      <van-cell>
+        <!-- 使用 title 插槽来自定义标题 -->
+        <template slot="title">
+          <div align="left" style="padding-left: 17px;">是否通知相关人员：</div>
+          <van-field name="notifyOthers" >
+            <template #input>
+              <van-radio-group v-model="pingOthers" direction="horizontal">
+                <van-radio name="1">是</van-radio>
+                <van-radio name="0">否</van-radio>
+              </van-radio-group>
+            </template>
+          </van-field>
+        </template>
+      </van-cell>
       <div style="margin: 16px;">
         <van-button round block type="info" native-type="submit">
           提交
@@ -135,29 +182,17 @@ export default {
   },
   data() {
     return {
-      columns: [{ values: Object.keys(issueTypes) }, { values: issueTypes['水面水体问题'] }],
-      name: '',
       position: '',
+      riverName: '',
+      riverList: ['村田河地杨村段', '下梅溪地杨村段', '梅宁河地杨村段'],
+      showRiver: false,
       images: [],
-      issueDesc: '',
       issueType: '',
-      issueTypeValue: '',
-
+      issueTypeList: [{ values: Object.keys(issueTypes) }, { values: issueTypes['水面水体问题'] }],
+      showIssueType: false,
+      issueDesc: '',
       processType: '',
       pingOthers: false,
-
-      showPicker: false,
-      categoryValues: [
-        { id: 10, text: '漂浮辣椒', category: '水面问题' },
-        { id: 11, text: '漂浮辣椒', category: '水面问题' },
-        { id: 12, text: '漂浮辣椒', category: '水面问题' },
-        { id: 20, text: '颜色异常', category: '水体问题' },
-        { id: 21, text: '不明液体', category: '水体问题' },
-        { id: 22, text: '其它水体问题', category: '水体问题' },
-        { id: 30, text: '异常问题1', category: '其它问题' },
-        { id: 31, text: '不明问题2', category: '其它问题' },
-        { id: 32, text: '其它不明问题', category: '其它问题' },
-      ],
     };
   },
   methods: {
@@ -165,13 +200,20 @@ export default {
       console.log('submit', values);
       this.$router.push('/');
     },
-    onConfirm(value, index) {
-      console.log(`当前值：${value}, 当前索引：${index}`);
+    onIssueConfirm(value) {
+      console.log(`当前值：${value}`);
       this.issueType = value;
-      this.showPicker = false;
+      this.showIssueType = false;
     },
-    onChange(picker, values) {
+    onIssueChange(picker, values) {
       picker.setColumnValues(1, issueTypes[values[0]]);
+    },
+    onRiverConfirm(value) {
+      this.riverName = value;
+      this.showRiver = false;
+    },
+    onRiverChange(value) {
+      this.riverName = value;
     },
     onLocationClicked() {
       this.$router.push('/main');
