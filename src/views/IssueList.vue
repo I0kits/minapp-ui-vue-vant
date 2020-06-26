@@ -4,13 +4,16 @@
       <van-list
         v-model="loading"
         :finished="finished"
-        finished-text="没有更多了"
+        finished-text="下拉加载更多"
         @load="onLoad"
       >
-        <van-cell v-for="item in list" :key="item" :title="item" />
+        <van-grid direction="horizontal" :column-num="1">
+          <van-grid-item v-for="item in list" :key="item.id"
+                         icon="photo-o" :text="item.desc" to="/issueDetail" >
+          </van-grid-item>
+        </van-grid>
       </van-list>
     </van-pull-refresh>
-    <van-button type="info">加载更多</van-button>
   </div>
 </template>
 
@@ -19,8 +22,20 @@
 
 <script>
 import {
-  Button, Icon, List, PullRefresh
+  Button, Icon, List, PullRefresh, Cell, Grid, GridItem,
 } from 'vant';
+
+const issueList = [
+  { desc: '漂浮垃圾11', time: '2020-06-26 22:22:22', submitter: '王小二' },
+  { desc: '漂浮垃圾22', time: '2020-06-25 22:22:22', submitter: '李磊' },
+  { desc: '漂浮垃圾33', time: '2020-06-24 22:22:22', submitter: '张三' },
+  { desc: '漂浮垃圾11', time: '2020-06-26 22:22:22', submitter: '王小二' },
+  { desc: '漂浮垃圾22', time: '2020-06-25 22:22:22', submitter: '李磊' },
+  { desc: '漂浮垃圾33', time: '2020-06-24 22:22:22', submitter: '张三' },
+  { desc: '漂浮垃圾11', time: '2020-06-26 22:22:22', submitter: '王小二' },
+  { desc: '漂浮垃圾22', time: '2020-06-25 22:22:22', submitter: '李磊' },
+  { desc: '漂浮垃圾33', time: '2020-06-24 22:22:22', submitter: '张三' },
+];
 
 export default {
   components: {
@@ -28,10 +43,14 @@ export default {
     [Button.name]: Button,
     [Icon.name]: Icon,
     [PullRefresh.name]: PullRefresh,
+    [Cell.name]: Cell,
+    [Grid.name]: Grid,
+    [GridItem.name]: GridItem,
   },
   data() {
     return {
-      list: [],
+      myTitle: '河湖问题列表',
+      list: issueList,
       loading: false,
       finished: false,
       refreshing: false,
@@ -50,10 +69,9 @@ export default {
       //   this.finished = true;
       // }, 1000);
       if (this.refreshing) {
-        this.list = [];
+        this.list = issueList;
         this.refreshing = false;
       }
-      this.list.push(1);
       this.loading = false;
       this.finished = true;
     },

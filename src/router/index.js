@@ -28,6 +28,11 @@ const routes = [
     name: 'IssueList',
     component: () => import('../views/IssueList.vue'),
   },
+  {
+    path: '/issueDetail',
+    name: 'IssueDetail',
+    component: () => import('../views/IssueDetail.vue'),
+  },
 ];
 
 const router = new VueRouter({
