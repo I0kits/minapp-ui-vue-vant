@@ -94,7 +94,13 @@ export default {
     });
   },
   currentPosition() {
-    return new Promise((onSuccess, onFail) => {
+    return new Promise((resolve, onFail) => {
+      const onSuccess = (dat) => {
+        if (dat.errorCode > 0) return onFail(dat.errorMessage);
+        if (!_.isEmpty(dat.address)) return resolve(dat.address);
+        return resolve(`${dat.province}${dat.city}${dat.district}${dat.road}`);
+      };
+
       ding.device.geolocation.get({
         onFail,
         onSuccess,
@@ -112,23 +118,24 @@ export default {
       });
     });
   },
-  chooseUsers() {
+  chooseUsers(title, opts) {
     return new Promise((onSuccess, onFail) => {
       ding.biz.contact.complexPicker({
+        title,
         onFail,
         onSuccess,
-        title: '请选择相关人员',
-        appId: conf.agentId,
-        corpId: conf.corpId,
-        multiple: true,
         maxUsers: 200,
+        multiple: true,
         pickedUsers: [],
-        pickedDepartments: [],
-        disabledUsers: [],
-        disabledDepartments: [],
         requiredUsers: [],
-        requiredDepartments: [],
+        disabledUsers: [],
+        corpId: conf.corpId,
+        appId: conf.agentId,
+        pickedDepartments: [],
         responseUserOnly: true,
+        disabledDepartments: [],
+        requiredDepartments: [],
+        ...opts,
       });
     });
   },

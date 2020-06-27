@@ -95,7 +95,7 @@ export default {
         this.hasErrors = false;
         this.status = 'Loading user information...';
         dd.loadUserInfo().then((usr) => {
-          this.$store.commit('updateUserInfo', usr.data);
+          this.$store.commit('onUserInfoUpdated', usr.data);
           this.status = `USR-INFO: ${JSON.stringify(this.$store.state.user)}`;
           this.configJsApisSign(window.location.href);
         }).catch((err) => {

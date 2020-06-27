@@ -3,12 +3,23 @@ import Vuex from 'vuex';
 
 Vue.use(Vuex);
 
+const issueTypeNames = [
+  { text: '设施问题', children: [{ text: '设施问题A' }, { text: '设施问题B' }] },
+  { text: '非法行为', children: [{ text: '非法行为I' }, { text: '非法行为II' }] },
+  { text: '排污问题', children: [{ text: '漂浮垃圾' }, { text: '河底垃圾' }, { text: '水体异味' }] },
+  { text: '岸线四乱', children: [{ text: '岸线四乱1' }, { text: '岸线四乱2' }, { text: '岸线四乱2' }] },
+  { text: '水面水体问题', children: [{ text: '水体异味' }, { text: '颜色异常' }, { text: '河底垃圾' }] },
+];
+
 export default new Vuex.Store({
   state: {
+    issueTypeNames,
     user: {
+      userid: 0,
       name: 'Guest',
       avatar: 'https://tva3.sinaimg.cn/crop.2.2.363.363.180/c23430b4tw1el1fpw55y8j20a70a73zt.jpg',
     },
+    riverNameList: ['村田河地杨村段', '下梅溪地杨村段', '梅宁河地杨村段'],
     issues: [
       {
         id: 1,
@@ -19,9 +30,9 @@ export default new Vuex.Store({
         notifyOthers: true,
         desc: '水面有漂浮物垃圾',
         chatGroupId: undefined,
-        type: '排污问题, 河底垃圾',
         position: '高新区科技7路16号',
         time: '2020-06-27 12:22:54',
+        issueTypeName: '非法行为, 水体异味',
       }, {
         id: 2,
         images: [],
@@ -31,9 +42,9 @@ export default new Vuex.Store({
         notifyOthers: true,
         desc: '河岸四处都有生活垃圾',
         chatGroupId: undefined,
-        type: '排污问题, 河底垃圾',
         position: '高新区科技7路16号',
         time: '2020-06-25 10:12:22',
+        issueTypeName: '排污问题, 漂浮垃圾',
       }, {
         id: 3,
         images: [],
@@ -43,18 +54,26 @@ export default new Vuex.Store({
         notifyOthers: true,
         chatGroupId: undefined,
         desc: '有工厂在私自排污',
-        type: '排污问题, 河底垃圾',
         position: '高新区科技7路16号',
         time: '2020-06-25 10:12:22',
+        issueTypeName: '水面水体问题, 颜色异常',
       },
     ],
   },
   mutations: {
-    updateUserInfo(state, dat) {
-      Object.assign(state.user, dat);
+    onUserInfoUpdated(state, usr) {
+      state.user = { ...state.user, ...usr };
     },
   },
   actions: {
+    createIssue(context, dat) {
+      console.log('post data to server:', dat);
+      console.log(context);
+      return new Promise((resolve) => {
+        // TODO add commit logic
+        setTimeout(() => resolve(), 5000);
+      });
+    },
   },
   modules: {
   },

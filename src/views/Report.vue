@@ -1,45 +1,28 @@
 <template>
   <div class="report">
-    <van-form @submit="onSubmit">
-      <div style.display = "none" name="submitter"></div>
-      <div style.display = "none" name="time"></div>
+    <van-form scroll-to-error @submit="onSubmit" @failed="onInvalid" ref="form">
       <!-- position 问题所在位置由地图定位选择后填入-->
       <van-cell>
-        <!-- 使用 title 插槽来自定义标题 -->
         <template slot="title">
           <div align="left" style="padding-left: 17px;">位置：</div>
-          <van-field
-            v-model="position"
-            offset="0"
-            name="position"
-            clearable
-            right-icon="location-o"
-            @click-right-icon="onLocationClicked"
-            placeholder="问题所在位置"
-            :rules="[{ required: true, message: '问题所在位置必须填写.' }]">
+          <van-field clearable v-model="position" name="position" right-icon="location-o"
+             v-bind:placeholder="positionPlaceholder" @click-right-icon="onLocationClicked"
+             offset="0" :rules="[{ required: true, message: '问题所在位置必须填写.' }]">
           </van-field>
         </template>
       </van-cell>
 
       <!--riverAddress 问题河流对应村落地址-->
       <van-cell>
-        <!-- 使用 title 插槽来自定义标题 -->
         <template slot="title">
           <div align="left" style="padding-left: 17px;">对应河湖：</div>
-          <van-field
-            readonly
-            clickable
-            name="riverName"
-            :value="riverName"
-            placeholder="点击选择对应河湖"
-            @click="showRiver = true"></van-field>
-
-          <van-popup v-model="showRiver" position="bottom">
-            <van-picker
-              show-toolbar
-              :columns="riverList"
-              @confirm="onRiverConfirm"
-              @cancel="showRiver = false"></van-picker>
+          <van-field readonly clickable name="riverName" :value="riverName"
+             placeholder="点击选择对应河湖" @click="showRiverSelector = true"
+             :rules="[{ required: true, message: '对应河湖名称必须填写.' }]">
+          </van-field>
+          <van-popup v-model="showRiverSelector" position="bottom">
+            <van-picker show-toolbar :columns="riverNames" @confirm="onRiverNameConfirm"
+              @cancel="showRiverSelector = false"></van-picker>
           </van-popup>
         </template>
       </van-cell>
@@ -49,58 +32,41 @@
         <!-- 使用 title 插槽来自定义标题 -->
         <template slot="title">
           <div align="left" style="padding-left: 17px;">问题图片：</div>
-          <van-field name="uploader">
-            <template #input>
-              <van-uploader v-model="images" />
-            </template>
+          <van-field name="images">
+            <template #input><van-uploader v-model="images"></van-uploader></template>
           </van-field>
         </template>
       </van-cell>
 
       <!--issueType 问题类型下拉选择-->
       <van-cell>
-        <!-- 使用 title 插槽来自定义标题 -->
         <template slot="title">
           <div align="left" style="padding-left: 17px;">问题类型：</div>
-          <van-field
-            readonly
-            clickable
-            name="issueTypeName"
-            :value="issueTypeName"
-            placeholder="点击选择问题类型"
-            @click="showIssueType = true"></van-field>
-          <van-popup v-model="showIssueType" position="bottom">
-            <van-picker
-              show-toolbar
-              :columns="issueTypeList"
-              @change="onIssueChange"
-              @confirm="onIssueConfirm"
-              @cancel="showIssueType = false"></van-picker>
+          <van-field readonly clickable name="issueTypeName" :value="issueTypeName"
+             placeholder="点击选择问题类型" @click="showIssueTypeSelector = true"
+             :rules="[{ required: true, message: '问题类型必须填写.' }]"></van-field>
+
+          <van-popup v-model="showIssueTypeSelector" position="bottom">
+            <van-picker show-toolbar :columns="issueTypes" @confirm="onIssueTypeConfirm"
+                @cancel="showIssueTypeSelector = false">
+            </van-picker>
           </van-popup>
         </template>
       </van-cell>
 
-      <!--issueDesc 问题描述用户输入-->
+      <!--desc 问题描述用户输入-->
       <van-cell>
-        <!-- 使用 title 插槽来自定义标题 -->
         <template slot="title">
           <div align="left" style="padding-left: 17px;">问题描述：</div>
-          <van-field
-            rows="2"
-            autosize
-            clearable
-            name="desc"
-            type="textarea"
-            maxlength="100"
-            show-word-limit
-            v-model="issueDesc"
-            placeholder="请输入问题描述"></van-field>
+          <van-field rows="2" autosize clearable name="desc" type="textarea" maxlength="100"
+            show-word-limit v-model="desc" placeholder="请输入问题描述"
+            :rules="[{ required: true, message: '问题描述必须填写.' }]">
+          </van-field>
         </template>
       </van-cell>
 
       <!--processType 处理方式单项选择-->
       <van-cell>
-        <!-- 使用 title 插槽来自定义标题 -->
         <template slot="title">
           <div align="left" style="padding-left: 17px;">处理方式：</div>
           <van-field name="processType" >
@@ -118,14 +84,14 @@
 
       <!--notifyOthers 是否通知相关上下游人员,选择是则会出发建群操作-->
       <van-cell>
-        <!-- 使用 title 插槽来自定义标题 -->
         <template slot="title">
           <div align="left" style="padding-left: 17px;">是否通知相关人员：</div>
           <van-field name="notifyOthers" >
             <template #input>
-              <van-radio-group v-model="notifyOthers" direction="horizontal">
-                <van-radio name="1">是</van-radio>
-                <van-radio name="0">否</van-radio>
+              <van-radio-group v-model="notifyOthers" direction="horizontal"
+                @change="onNotifyOthersChange">
+                  <van-radio name="1">是</van-radio>
+                  <van-radio name="0">否</van-radio>
               </van-radio-group>
             </template>
           </van-field>
@@ -133,59 +99,67 @@
       </van-cell>
 
       <div style="margin: 16px;">
-        <van-button round block type="info" native-type="submit">提交</van-button>
+        <van-button round type="primary" size="large" native-type="submit">提交</van-button>
+        <van-button round type="default" size="large" @click="goList">取消</van-button>
       </div>
     </van-form>
+    <van-overlay :show="submitting">
+      <div class="wrapper">
+        <van-loading type="spinner" color="#1989fa">正在保存数据...</van-loading>
+      </div>
+    </van-overlay>
     <div style="margin: 16px;">
-      <van-button round block type="primary" @click="goList">
-        返回
-      </van-button>
+
     </div>
   </div>
 </template>
 
 <style scoped lang="less">
+  .wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+  }
 </style>
 
 <script>
-// import _ from 'lodash';
+import { mapState } from 'vuex';
 import {
-  Button, Form, Cell, Field, Picker, Popup, Uploader, RadioGroup, Radio, Checkbox, CheckboxGroup,
+  Button, Form, Cell, Field, Picker, Popup, Uploader, RadioGroup, Radio,
+  Checkbox, CheckboxGroup, Notify, Overlay, Loading,
 } from 'vant';
 
 import dd from '../apis/dd';
-
-const issueTypes = {
-  水面水体问题: ['1漂浮垃圾', '1河底垃圾', '1水体异味', '1颜色异常'],
-  排污问题: ['2漂浮垃圾', '2河底垃圾', '2水体异味', '2颜色异常'],
-  岸线四乱: ['3漂浮垃圾', '3河底垃圾', '3水体异味', '3颜色异常'],
-  设施问题: ['4漂浮垃圾', '4河底垃圾', '4水体异味', '4颜色异常'],
-  非法行为: ['5漂浮垃圾', '5河底垃圾', '5水体异味', '5颜色异常'],
-};
 
 export default {
   name: 'Report',
   data() {
     return {
-      position: '',
-      latitude: 0,
-      longitude: 0,
-
-      riverName: '',
-      showRiver: false,
-      riverList: ['村田河地杨村段', '下梅溪地杨村段', '梅宁河地杨村段'],
+      desc: '',
       images: [],
-
+      position: '',
+      riverName: '',
       issueTypeName: '',
-      showIssueType: false,
-      issueTypeList: [{ values: Object.keys(issueTypes) }, { values: issueTypes['水面水体问题'] }],
 
-      issueDesc: '',
-      processType: '',
-      notifyOthers: false,
+      processType: '1',
+      notifyOthers: '0',
+      otherUserList: [],
+
+      showRiverSelector: false,
+      showIssueTypeSelector: false,
+      positionPlaceholder: '问题所在位置',
+
+      submitting: false,
     };
   },
   computed: {
+    ...mapState({
+      user: 'user',
+      riverNames: 'riverNameList',
+      issueTypes: 'issueTypeNames',
+      submitter: ({ user }) => user.name,
+    }),
   },
   mounted() {
     setTimeout(this.fetchCurrentPosition, 500);
@@ -198,6 +172,9 @@ export default {
     [Field.name]: Field,
     [Button.name]: Button,
     [Picker.name]: Picker,
+    [Notify.name]: Notify,
+    [Overlay.name]: Overlay,
+    [Loading.name]: Loading,
     [Checkbox.name]: Checkbox,
     [Uploader.name]: Uploader,
     [RadioGroup.name]: RadioGroup,
@@ -205,53 +182,40 @@ export default {
   },
   methods: {
     fetchCurrentPosition() {
-      this.position = '定位中....';
-      dd.currentPosition().then((dat) => {
-        const { errorCode, errorMessage } = dat;
-        if (errorCode > 0) {
-          this.position = `定位失败：[${errorCode}] - ${errorMessage}`;
-          return;
-        }
-
-        this.latitude = dat.latitude;
-        this.longitude = dat.longitude;
-        this.position = `${dat.address}`;
-      }).catch((err) => {
+      this.positionPlaceholder = '定位中....';
+      dd.currentPosition().then((v) => { this.position = v; }).catch((err) => {
         this.position = `ERR - ${JSON.stringify(err)}`;
       });
     },
+    onInvalid(err) {
+      Notify({ type: 'danger', message: `${err.errors[0].message}` });
+    },
     onSubmit(values) {
-      const myValues = values;
-      myValues.submitter = '张磊';
-      myValues.time = new Date().toLocaleString('chinese', { hour12: false });
-      this.localData('set', 'report', myValues);
-      this.$router.push('/');
-      console.log('submit', values);
-      // TODO: save data to [SERVER]
+      this.$refs.form.validate().then(() => {
+        const time = new Date();
+        const otherUsers = this.otherUserList;
 
-      // if (this.notifyOthers) {
-      //   dd.createChatGroup([]).then((ret) => {
-      //     const chatGroupId = ret.id;
-      //     this.errorMessage = `Got Chat Group: ${chatGroupId}`;
-      //   }).catch((err) => {
-      //     this.errorMessage = err;
-      //   });
-      // }
-      // this.goList();
+        const dat = {
+          time,
+          ...values,
+          otherUsers,
+          submitter: this.submitter,
+        };
+
+        this.submitting = true;
+        this.$store.dispatch('createIssue', dat).then(() => {
+          this.submitting = false;
+          this.goList();
+        });
+      });
     },
-    onIssueConfirm(value) {
-      this.showIssueType = false;
+    onIssueTypeConfirm(value) {
       this.issueTypeName = value.join(',');
+      this.showIssueTypeSelector = false;
     },
-    onIssueChange(picker, values) {
-      picker.setColumnValues(1, issueTypes[values[0]]);
-    },
-    onRiverConfirm(value) {
+    onRiverNameConfirm(value) {
       this.riverName = value;
-      this.showRiver = false;
-    },
-    onRiverChange(value) {
-      this.riverName = value;
+      this.showRiverSelector = false;
     },
     goList() {
       this.$router.push('/issue-list');
@@ -268,7 +232,16 @@ export default {
         });
     },
     onNotifyOthersChange(name) {
-      this.notifyOthers = parseInt(name, 10) === 0;
+      if (name === '0') {
+        this.otherUserList = [];
+        return;
+      }
+
+      const opts = { requiredUsers: [this.user.userid] };
+      const onSelected = ({ users }) => { this.otherUserList = users; };
+      const onCancel = () => { this.otherUserList = []; this.notifyOthers = '0'; };
+
+      dd.chooseUsers('请选择相关人', opts).then(onSelected).catch(onCancel);
     },
   },
 };
