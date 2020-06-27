@@ -2,7 +2,6 @@ import _ from 'lodash';
 import * as ding from 'dingtalk-jsapi';
 
 import conf from '../conf';
-import apis from './index';
 
 const status = { ready: false };
 
@@ -43,18 +42,6 @@ const jsApiList = [
   'runtime.permission.requestOperateAuthCode',
 ];
 
-const hasError = ({ data }) => {
-  if (_.isUndefined(data)) {
-    return true;
-  }
-
-  if (_.has(data, 'error')) {
-    return true;
-  }
-
-  return false;
-};
-
 const init = (resolve) => {
   status.ready = true;
 
@@ -74,24 +61,11 @@ export default {
       }
     });
   },
-  configJsApis(url) {
-    return new Promise((resolve, reject) => {
-      const handle = (dat) => {
-        const data = { ...dat.data.data, jsApiList };
-        ding.config(data);
-        resolve({ data });
-      };
-      apis.sign(url).then(handle).catch(reject);
-    });
+  getAuthCode(corpId) {
+    return ding.runtime.permission.requestAuthCode({ corpId });
   },
-  loadUserInfo() {
-    return new Promise((resolve, reject) => {
-      const handle = (resp) => {
-        if (hasError(resp)) reject(resp);
-        resolve(resp);
-      };
-      apis.getUserInfo(conf.corpId).toPromise().then(handle).catch(reject);
-    });
+  configJsPermission(config) {
+    ding.config({ ...config, jsApiList });
   },
   currentPosition() {
     return new Promise((resolve, onFail) => {

@@ -61,8 +61,8 @@
 <script>
 import { NavBar, Image } from 'vant';
 
+import apis from './apis';
 import conf from './conf';
-import dd from './apis/dd';
 
 export default {
   name: 'App',
@@ -91,10 +91,10 @@ export default {
       this.status = 'Skip runtime env check...';
     },
     initDingtalkEnv() {
-      dd.init().then(() => {
+      apis.init().then(() => {
         this.hasErrors = false;
         this.status = 'Loading user information...';
-        dd.loadUserInfo().then((usr) => {
+        apis.loadUserInfo().then((usr) => {
           this.$store.commit('onUserInfoUpdated', usr.data);
           this.status = `USR-INFO: ${JSON.stringify(this.$store.state.user)}`;
           this.configJsApisSign(window.location.href);
@@ -106,7 +106,7 @@ export default {
     },
     configJsApisSign(url) {
       this.status = 'Setup js-apis permission...';
-      const setup = () => dd.configJsApis(url)
+      const setup = () => apis.configJsApis(url)
         .then((dat) => {
           // this.status = `SIGN-DAT: ${JSON.stringify(dat.data)}`;
           this.status = `Setup js-apis permission done: [${dat.data.jsApiList.length}].`;

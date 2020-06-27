@@ -1,6 +1,9 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 
+import _ from 'lodash';
+import apis from '../apis';
+
 Vue.use(Vuex);
 
 const issueTypeNames = [
@@ -64,14 +67,21 @@ export default new Vuex.Store({
     onUserInfoUpdated(state, usr) {
       state.user = { ...state.user, ...usr };
     },
+    onAddNewIssue(state, issue) {
+      state.issues = [issue].concat(state.issues);
+    },
   },
   actions: {
-    createIssue(context, dat) {
-      console.log('post data to server:', dat);
-      console.log(context);
-      return new Promise((resolve) => {
-        // TODO add commit logic
-        setTimeout(() => resolve(), 5000);
+    createIssue(context, payload) {
+      const { otherUsers, ...dat } = payload;
+      dat.releUsers = [context.state.user.userid, ..._.map(otherUsers, 'emplId')];
+
+      return new Promise((resolve, reject) => {
+        apis.createIssue(dat).catch(reject).then((resp) => {
+          const { chatid, id } = resp.data;
+          context.commit('onAddNewIssue', { ...payload, id, chatGroupId: chatid });
+          resolve();
+        });
       });
     },
   },
