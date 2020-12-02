@@ -72,12 +72,13 @@ export default {
   },
   data() {
     return {
+      count: 0,
       ready: false,
       hasErrors: true,
       status: 'Not in DingTalk environment!',
     };
   },
-  mounted() {
+  created() {
     if (conf.disableDingTalk) {
       this.skipEnvCheck();
     } else {

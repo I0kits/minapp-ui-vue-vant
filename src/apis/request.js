@@ -4,6 +4,7 @@ import conf from '../conf';
 
 const instance = axios.create({
   timeout: 30000,
+  withCredentials: false,
   baseURL: conf.apiBaseUrl,
 });
 

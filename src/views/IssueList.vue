@@ -3,15 +3,14 @@
     <van-button type="primary" icon="add-o" @click="onReportNewIssue">
       报告新问题
     </van-button>
-    <van-pull-refresh v-model="refreshing" @refresh="onRefresh">
-      <van-list v-model="loading" :finished="finished" finished-text="" @load="onLoad">
-        <van-grid direction="horizontal" :column-num="1" icon-size="38px">
-          <van-cell v-for="item in items" :key="item.id" :label="item.submitter"
-              icon="location-o" :title="item.desc" is-link value="详情" to="/issue-detail">
-          </van-cell>
-        </van-grid>
-      </van-list>
-    </van-pull-refresh>
+    <!--van-pull-refresh v-model="refreshing" @refresh="onRefresh"></van-pull-refresh-->
+    <van-list v-model="loading" :finished="finished" finished-text="" @load="onLoad">
+      <van-grid direction="horizontal" :column-num="1" icon-size="38px">
+        <van-cell v-for="item in items" :key="item.id" :label="item.submitter"
+            icon="location-o" :title="item.desc" is-link value="详情" to="/issue-detail">
+        </van-cell>
+      </van-grid>
+    </van-list>
   </div>
 </template>
 
@@ -59,7 +58,7 @@ export default {
   methods: {
     onLoad() {
       if (this.refreshing) {
-        this.$store.state.issues.push(this.localData('get', 'report', null));
+        // this.$store.state.issues.push(this.localData('get', 'report', null));
         this.refreshing = false;
         this.list = this.$store.state.issues;
       }

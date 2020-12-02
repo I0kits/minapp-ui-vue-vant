@@ -10,13 +10,9 @@ const hasError = ({ data }) => {
   if (_.isUndefined(data)) {
     return true;
   }
-
-  if (_.has(data, 'error')) {
-    return true;
-  }
-
-  return false;
+  return _.has(data, 'error');
 };
+
 const sign = (url) => request.post('/sign', { url });
 const getUserData = (dat) => request.get('/user', { params: { code: dat.code } });
 const getUserInfo = (corpId) => from(dd.getAuthCode(corpId)).pipe(concatMap(getUserData));

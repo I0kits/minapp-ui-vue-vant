@@ -7,6 +7,8 @@
     "lint": "vue-cli-service lint",
     "test:unit": "vue-cli-service test:unit",
     "build": "vue-cli-service build --modern",
+    "build:staging": "vue-cli-service build --mode staging --modern",
+    "deploy:ghpages": "",
     "deploy:oss": "vue-cli-service build --modern && vue-cli-service deploy-oss",
     "deploy:surge": "vue-cli-service build --mode staging --modern && vue-cli-service deploy-surge"
   },
@@ -42,6 +44,7 @@
     "eslint": "^6.7.2",
     "eslint-plugin-import": "^2.20.2",
     "eslint-plugin-vue": "^6.2.2",
+    "github-pages-publisher": "^0.0.4",
     "globby": "^11.0.1",
     "less": "^3.0.4",
     "less-loader": "^5.0.0",
