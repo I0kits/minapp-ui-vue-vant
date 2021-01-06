@@ -13,7 +13,7 @@
     "deploy:surge": "vue-cli-service build --mode staging --modern && vue-cli-service deploy-surge"
   },
   "dependencies": {
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "core-js": "^3.6.4",
     "dingtalk-jsapi": "^2.11.2",
     "lodash": "^4.17.15",
